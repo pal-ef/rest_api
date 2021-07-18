@@ -1,15 +1,34 @@
 // Rest API with TypeScript practice
 import express from 'express';
+import mongoose from 'mongoose';
 import indexRouter from './routes/index.routes';
-
+import userRouter from './routes/user.routes';
 
 class Server {
     app: express.Application;
 
     constructor() {
+        
         this.app = express();
+        this.database();
         this.config();
         this.routes();
+    }
+
+    database() {
+        const db = mongoose.connection;
+
+        mongoose.connect('mongodb://localhost/rest-api', {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            useFindAndModify: true,
+            useCreateIndex: true
+        });
+        
+        db.on('error', console.error.bind(console, 'conection error:'));
+        db.once('open', () => {
+            console.log('Database connected succesfully');
+        });
     }
 
     config() {
@@ -18,12 +37,13 @@ class Server {
 
     start() {
         this.app.listen(this.app.get('port'), () =>  {
-            console.log('server started');
+            console.log('---- SERVER RUNNING ----');
         });
     }
 
     routes() {
         this.app.use(indexRouter);
+        this.app.use('/api/user', userRouter);
     }
 }
 
