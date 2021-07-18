@@ -1,6 +1,8 @@
 // Rest API with TypeScript practice
 import express from 'express';
 import mongoose from 'mongoose';
+import morgan from 'morgan';
+import cors from 'cors';
 import indexRouter from './routes/index.routes';
 import userRouter from './routes/user.routes';
 
@@ -33,6 +35,11 @@ class Server {
 
     config() {
         this.app.set('port', 3000);
+        //Middlewares
+        this.app.use(express.urlencoded({extended: false}));
+        this.app.use(express.json());
+        this.app.use(cors());
+        this.app.use(morgan('combined'));
     }
 
     start() {
